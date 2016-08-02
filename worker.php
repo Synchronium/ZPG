@@ -1,23 +1,17 @@
 <?php
 
-/*
+	require_once __DIR__ . '/vendor/autoload.php';
 
-This is an example worker script. It listens on the ZMQ socket for a number
-and multiplies it by 2 and returns the response.
+	$context = new \ZMQContext();
+	$clientSocket = new \ZMQSocket($context, \ZMQ::SOCKET_REP);
+	$clientSocket->connect('ipc:///tmp/calc.ipc');
 
-It then sleeps for 3 seconds to simulate a more complex task.
+	do {
 
-*/
+		$equation = $clientSocket->recv();
+		$answer = CalculationParser::calculate( $equation );
+		$clientSocket->send($answer);
 
-$context = new \ZMQContext();
-$clientSocket = new \ZMQSocket($context, \ZMQ::SOCKET_REP);
-$clientSocket->connect('ipc:///tmp/example.ipc');
+		sleep( rand(0, 5) );
 
-do {
-
-    $number = $clientSocket->recv();
-    $clientSocket->send($number * 2);
-
-    sleep(3);
-
-} while (true);
+	} while (true);

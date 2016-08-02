@@ -8,11 +8,16 @@
 		die();
 	}
 	
-	// Assumption: only valid calculation string will be passed
+	// Assumption: only valid equation string will be passed
 	// No need to syntax check
-	$calculation = $argv[1];
+	$equation = $argv[1];
 
-	echo "The answer is: " . CalculationParser::calculate( $calculation ) . "\n";
-	
+	$context = new \ZMQContext();
+	$serverSocket = new \ZMQSocket($context, \ZMQ::SOCKET_REQ);
+	$serverSocket->bind('ipc:///tmp/calc.ipc');
+
+    $serverSocket->send($equation);
+    $result = $serverSocket->recv();
+    echo sprintf( 'The answer is %d', $result ) . PHP_EOL;
 	
 ?>
