@@ -30,8 +30,6 @@
 					// and iterate once more...
 					$prev_equation = $new_equation;
 				
-				echo "NEW EQUATION: $new_equation\n";
-				
 				} // end while
 			
 			} // end foreach

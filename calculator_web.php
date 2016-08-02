@@ -2,22 +2,7 @@
 
 	require_once __DIR__ . '/vendor/autoload.php';
 	
-	// Check for correct usage with a single argument 
-	if ($argc != 2) {
-		echo sprintf( "Invalid argument. Use as follows:\nphp %s \"calculation\"\n", $argv[0] );
-		die();
-	}
-	
-	// Assumption: only valid calculation string will be passed
-	// No need to syntax check
-	$calculation = $argv[1];
-
-	echo "The answer is: " . CalculationParser::calculate( $calculation ) . "\n";
-	
-	
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -46,16 +31,30 @@
 		<div class="container">
 			<h1>Calculator</h1>
 			<p>Submit equation below:</p>
-			<form action="" action="post">
-				<input name="equation" placeholder="eg. 4 * 6 ^ 8 + 1 / 3">
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button> 
+			<div>
+			<form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']);?>">
+			<div class="form-group">
+							<div class="col-xs-8">
+<input name="equation" class="form-control" placeholder="eg. 4 * 6 ^ 8 + 1 / 3">
+							</div>
+							<div class="col-xs-4">
+				<button class="btn btn-primary btn-block" type="submit">Submit</button> 
+							</div>
+						</div>
+				
+
 			</form>
+			</div>
 <?php
 
 			if ( isset( $_POST['equation'] ) ) 
 			{
+
 				$equation = $_POST['equation'];
 				echo "<p>$equation = " .  CalculationParser::calculate( $equation ) . "</p>";
+			
+			} else {
+
 			
 			}
 
