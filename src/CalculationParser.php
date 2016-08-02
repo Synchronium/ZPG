@@ -40,8 +40,8 @@
 		
 		private function _replaceSimpleCalculation( $pattern, $equation ) {
 		
-			$number_pattern = '[0-9.-]+';
-			$regex = "%($number_pattern)\s([{$pattern}])\s($number_pattern)%";
+			$number_pattern = '-?[0-9.]+';
+			$regex = "%($number_pattern)\s?([{$pattern}])\s?($number_pattern)%";
 			
 			// returns a substituted string, swapping one simple calculation
 			// with its result
