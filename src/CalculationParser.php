@@ -1,56 +1,67 @@
 <?php
 
 	class CalculationParser {
-	
-		private $_equasion;
 		
+		public function calculate( $equation ) {
 		
-		public function __construct( $equasion ) {
-		
-			$this->_equasion = $equasion;
-		
-		}
-	
-		public function calculate() {
-		
-			// Step 1 -  multiply, divide and exponentials
-			// while preg_match returns true,
-			// swap out simple calculations with their result one by one
-			// Feed new shorter equasion back in
-			
-			$new = $this->_replaceSimpleCalculation( '*/\^', $this->_equasion );
-			
-			// Step 2 - add and subtract
-			// same as step 1
 
-			$new = $this->_replaceSimpleCalculation( '+-', $new );
-
+			// Operators grouped by precedence
+			// Escaped for use in regex
+			$operator_patterns = array(
+				0 => '*/\^', // Highest priority
+				1 => '+-' // Lowest priority
+			);
 			
-			return $new;
+			$prev_equation = $equation;
+			$new_equation = null;
 			
-		
-		}
-		
-		private function _replaceSimpleCalculation( $pattern, $equasion ) {
-		
-			$regex = "%(\d+)\s([{$pattern}])\s(\d+)%";
+			// Loop through operator priority levels
+			foreach ( $operator_patterns as $operator_pattern ) {
 			
-			return preg_replace_callback( $regex, 
+				// While loop to substitute out simple calculations with their answers
 			
-				function ($matches) {
+				while(
+					// Get substitution result and check it against previous string
+					( $new_equation = self::_replaceSimpleCalculation( $operator_pattern, $prev_equation ) ) != $prev_equation
+			
+				) {
+			
+					// Not a match, so assign results to prev variable
+					// and iterate once more...
+					$prev_equation = $new_equation;
 				
+				echo "NEW EQUATION: $new_equation\n";
+				
+				} // end while
+			
+			} // end foreach
+			
+			return $new_equation;
+			
+		}
+		
+		private function _replaceSimpleCalculation( $pattern, $equation ) {
+		
+			$number_pattern = '[0-9.-]+';
+			$regex = "%($number_pattern)\s([{$pattern}])\s($number_pattern)%";
+			
+			// returns a substituted string, swapping one simple calculation
+			// with its result
+			// eg "3 * 4 + 2" --> "12 + 2"
+			return preg_replace_callback( $regex, function ($matches) {
+					// This function calls _calculateSimple with both values
+					// and operator pulled from the first match of the pattern
+					// on the equation string
 					$a = $matches[1];
 					$b = $matches[3];
 					$operator = $matches[2];
-
 					return self::_calculateSimple( $a, $b, $operator );	
-				
-				}
-			
-			, $equasion );	
+				}, $equation, 1 );	// LIMIT = 1
 		
 		}		
 		
+		// Gets the result of a simple calculation by mapping the
+		// operator symbol to the appropriate method of the Calculator class
 		private function _calculateSimple( $a, $b, $operator ) {
 	
 			$function = null;
@@ -76,9 +87,7 @@
 				
 				
 			if ( ! is_null( $function ) ) {
-			
 				return Calculator::$function( $a, $b );
-			
 			}
 			
 			return false;	

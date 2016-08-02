@@ -11,10 +11,8 @@
 	// Assumption: only valid calculation string will be passed
 	// No need to syntax check
 	$calculation = $argv[1];
-	
-	$calc = new CalculationParser( $calculation );
-	
-	echo "The answer is: " .  $calc->calculate();
+
+	echo "The answer is: " . CalculationParser::calculate( $calculation ) . "\n";
 	
 	
 ?>
